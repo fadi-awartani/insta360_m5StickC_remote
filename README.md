@@ -6,3 +6,10 @@ Tested with Insta360 X5, but should work for X3, X4, and RS.
 Tested on M5StickC and M5StickC Plus2, but should with on M5StickC Plus, too.
 
 Details at serialhobbyism.com
+
+------------
+
+Make sure to set: const char REMOTE_IDENTIFIER[4] = "A01";
+in the main .ino file!
+
+That is a unique identifier and provides interference/cross communication with multiple remotes/cameras.
