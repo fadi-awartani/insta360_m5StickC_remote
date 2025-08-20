@@ -5,7 +5,7 @@ Tested with Insta360 X5, but should work for X3, X4, and RS.
 
 Tested on M5StickC and M5StickC Plus2, but should with on M5StickC Plus, too.
 
-Details at serialhobbyism.com
+Details at [serialhobbyism.com](https://serialhobbyism.com/open-source-diy-remote-for-insta360-cameras)
 
 ------------
 
