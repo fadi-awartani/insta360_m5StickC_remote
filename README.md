@@ -1,4 +1,7 @@
 # Insta360 M5StickC Remote
+
+![PXL_20250820_214156776](https://github.com/user-attachments/assets/cb476995-21c1-4d7c-819d-0d593e1e3284)
+
 A remote for Insta360 cameras based on the M5StickC, M5StickC Plus, and M5StickC Plus2
 
 Tested with Insta360 X5, but should work for X3, X4, and RS.
