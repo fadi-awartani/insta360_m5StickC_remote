@@ -7,6 +7,8 @@ Tested on M5StickC and M5StickC Plus2, but should with on M5StickC Plus, too.
 
 Details at [serialhobbyism.com](https://serialhobbyism.com/open-source-diy-remote-for-insta360-cameras)
 
+https://youtube.com/shorts/_0BtUzAN8ro?feature=share
+
 ------------
 
 Make sure to set: const char REMOTE_IDENTIFIER[4] = "A01";
