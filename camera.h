@@ -29,6 +29,7 @@ bool wakeMode = false;
 uint8_t currentWakePayload[6] = {0};
 
 void loadCurrentCamera() {
+  
   Serial.println("Loading camera from preferences...");
   
   preferences.begin("camera", false);

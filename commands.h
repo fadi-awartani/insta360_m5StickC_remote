@@ -12,6 +12,7 @@ void executeSleep();
 void executeWake();
 
 void connectNewCamera() {
+
   // Clear existing camera data
   Serial.println("Starting new camera pairing process");
   
@@ -114,6 +115,8 @@ void executeShutter() {
 
 void executeSwitchMode() {
   sendCommand(MODE_CMD, sizeof(MODE_CMD), "MODE");
+  mode_str = "Detecting...";
+  updateDisplay();
 }
 
 void executeScreenOff() {
@@ -125,7 +128,9 @@ void executeSleep() {
 }
 
 void executeWake() {
+
   if (!currentCamera.isValid) {
+
     M5.Lcd.fillScreen(BLACK);
     M5.Lcd.setCursor(25, 30);
     M5.Lcd.setTextColor(RED);
@@ -134,7 +139,9 @@ void executeWake() {
     M5.Lcd.setTextColor(WHITE);
     M5.Lcd.println("Connect first");
     delay(2000);
+
     updateDisplay();
+
     return;
   }
   
@@ -160,7 +167,7 @@ void executeWake() {
   M5.Lcd.setCursor(35, 35);
   M5.Lcd.setTextColor(GREEN);
   M5.Lcd.println("Wake sent!");
-  delay(1500);
+  delay(1000);
   updateDisplay();
 }
 

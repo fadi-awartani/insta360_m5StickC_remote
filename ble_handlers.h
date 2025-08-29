@@ -6,6 +6,9 @@
 #ifndef BLE_HANDLERS_H
 #define BLE_HANDLERS_H
 
+// No camera mode yet
+String mode_str = "Unknown";
+
 // BLE variables
 BLEServer* pServer = nullptr;
 BLEService* pService = nullptr;
@@ -15,10 +18,56 @@ BLEScan* pBLEScan = nullptr;
 bool deviceConnected = false;
 bool oldDeviceConnected = false;
 
+// Prefix before unique mode signatures
+const uint8_t MODE_STATUS_PREFIX[] = {
+  0xFE, 0xEF, 0xFE, 0x10, 0x80, 0x09, 0x01
+};
+
+// Recognize various modes by Camera responses
+const uint8_t MODE_CAMERA[] = {
+  0x20, 0x39, 0x39, 0x39, 0x2B
+};
+
+const uint8_t MODE_VIDEO[] = {
+  0x35, 0x68, 0x33, 0x35, 0x6D
+};
+
+const uint8_t MODE_TIMESHIFT[] = {
+  0x35, 0x68, 0x30, 0x33, 0x6D
+};
+
+const uint8_t MODE_LOOP_RECORDING[] = {
+  0x39, 0x68, 0x34, 0x32, 0x6D
+};
+
+const uint8_t HEARTBEAT[] = {
+  0xFE, 0xEF, 0xFE, 0x02, 0x80, 0x05, 0x01, 0x54 
+};
+
+void displayCameraMode(void) {
+
+    // If a mode was detected, show it
+    if (mode_str.length() > 0) {
+
+        String mode_line = "Mode: " + mode_str;
+
+        M5.Lcd.setTextSize(2);
+        M5.Lcd.fillRect(0, 90, 240, 25, BLACK);
+        M5.Lcd.setCursor(10, 95);
+        M5.Lcd.setTextColor(YELLOW);
+        M5.Lcd.print(mode_line);
+
+        // Reset text size
+        M5.Lcd.setTextSize(1);
+    }
+}
+
 // BLE Scan callback to capture camera info during pairing mode
 class MyScanCallbacks: public BLEAdvertisedDeviceCallbacks {
     void onResult(BLEAdvertisedDevice advertisedDevice) {
-      if (!pairingMode) return; // Only process during pairing mode
+
+      if (!pairingMode) 
+        return; // Only process during pairing mode
       
       // Look for Insta360 cameras
       if (advertisedDevice.haveName()) {
@@ -49,7 +98,9 @@ class MyScanCallbacks: public BLEAdvertisedDeviceCallbacks {
 };
 
 class MyServerCallbacks: public BLEServerCallbacks {
+
     void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param) {
+
       deviceConnected = true;
       
       // Get the connected device's address
@@ -61,6 +112,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
               param->connect.remote_bda[3],
               param->connect.remote_bda[4],
               param->connect.remote_bda[5]);
+
       connectedDeviceAddress = String(addressStr);
       
       Serial.print("Device connected from address: ");
@@ -68,10 +120,12 @@ class MyServerCallbacks: public BLEServerCallbacks {
       
       // Check if we're in pairing mode and have detected a camera
       if (pairingMode && detectedCameraName.length() > 0) {
+
         // Stop scanning
         if (pBLEScan) {
           pBLEScan->stop();
         }
+
         pairingMode = false;
         
         Serial.print("Pairing with detected camera: ");
@@ -87,6 +141,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
         }
         
         if (validFormat) {
+
           M5.Lcd.fillScreen(BLACK);
           M5.Lcd.setCursor(10, 10);
           M5.Lcd.setTextColor(GREEN);
@@ -97,8 +152,8 @@ class MyServerCallbacks: public BLEServerCallbacks {
           M5.Lcd.setCursor(10, 45);
           M5.Lcd.setTextColor(YELLOW);
           M5.Lcd.println(detectedCameraName);
-          
-          delay(2000);
+          mode_str = "Unknown";
+          delay(400);
           
           saveCurrentCamera(detectedCameraName, detectedCameraAddress);
           
@@ -109,7 +164,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
           M5.Lcd.setCursor(10, 40);
           M5.Lcd.setTextColor(YELLOW);
           M5.Lcd.println(currentCamera.name);
-          delay(2000);
+          delay(500);
         } else {
           // Invalid format
           M5.Lcd.fillScreen(BLACK);
@@ -119,12 +174,14 @@ class MyServerCallbacks: public BLEServerCallbacks {
           M5.Lcd.setCursor(10, 30);
           M5.Lcd.setTextColor(WHITE);
           M5.Lcd.println("Invalid camera");
+          mode_str = "Unknown";
           delay(3000);
           
           // Disconnect
           pServer->disconnect(pServer->getConnId());
         }
       } else if (pairingMode) {
+
         // In pairing mode but no camera detected yet
         M5.Lcd.fillScreen(BLACK);
         M5.Lcd.setCursor(10, 10);
@@ -136,6 +193,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
         M5.Lcd.println("Not identified.");
         M5.Lcd.setCursor(10, 40);
         M5.Lcd.println("Please retry.");
+        mode_str = "Unknown";
         delay(3000);
         
         // Stop pairing mode
@@ -147,9 +205,11 @@ class MyServerCallbacks: public BLEServerCallbacks {
         // Disconnect
         pServer->disconnect(pServer->getConnId());
       } else if (currentCamera.isValid) {
+
         // Known camera reconnected - just update display, no popup
         Serial.print("Known camera reconnected: ");
         Serial.println(currentCamera.name);
+        mode_str = "Unknown";
         updateDisplay();
       } else {
         // Not in pairing mode and no known camera
@@ -160,6 +220,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
         M5.Lcd.setCursor(10, 40);
         M5.Lcd.setTextColor(WHITE);
         M5.Lcd.println("Use Connect to pair");
+        mode_str = "Unknown";
         delay(3000);
         
         // Disconnect
@@ -174,6 +235,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
       connectedDeviceAddress = "";
       
       Serial.println("Camera disconnected");
+      mode_str = "Unknown";
       updateDisplay();
       
       // Return to normal advertising
@@ -182,20 +244,69 @@ class MyServerCallbacks: public BLEServerCallbacks {
 };
 
 class MyCharacteristicCallbacks: public BLECharacteristicCallbacks {
+
     void onWrite(BLECharacteristic* pCharacteristic) {
+
       String rxValue = pCharacteristic->getValue().c_str();
       
+      bool is_heartbeat = false;
+
       if (rxValue.length() > 0) {
-        Serial.print("RX: ");
-        for (int i = 0; i < rxValue.length(); i++) {
-          Serial.printf("%02X ", (uint8_t)rxValue[i]);
+
+        const uint8_t *data = (const uint8_t*)rxValue.c_str();
+
+        if (rxValue.length() == 8 && memcmp(data, HEARTBEAT, 8) == 0) {
+          Serial.printf("Heartbeat");
+          Serial.println();
+          is_heartbeat = true;
         }
-        Serial.println();
+        else if (rxValue.length() == 15 && memcmp(data, MODE_STATUS_PREFIX, 7) == 0) {
+
+          const uint8_t *cmd = data + 10;
+
+          // Camera mode?
+          if (memcmp(cmd, MODE_CAMERA, 5) == 0) {
+            mode_str = "Camera";
+          }
+          else if (memcmp(cmd, MODE_VIDEO, 5) == 0) {
+            // Seems to apply to several video modes (e.g., PureVideo)
+            mode_str = "Video";
+          }
+          else if (memcmp(cmd, MODE_TIMESHIFT, 5) == 0) {
+            // Timeshift
+            mode_str = "Timeshift";
+          }
+          else if (memcmp(cmd, MODE_LOOP_RECORDING, 5) == 0) {
+            // Loop Recording
+            mode_str = "Loop Record";
+          }
+          else {
+            Serial.printf("MODE unhandled returned: ");
+            for (int i = 10; i < rxValue.length(); i++) {
+              Serial.printf("%02X ", (uint8_t)rxValue[i]);
+            }
+            Serial.println();
+            mode_str = "Unhandled";
+          }
+
+          // We may know the mode now, if so, show it
+          displayCameraMode();
+        }
+
+        if (!is_heartbeat)
+        {
+            Serial.print("RX: ");
+            for (int i = 0; i < rxValue.length(); i++) {
+              Serial.printf("%02X ", (uint8_t)rxValue[i]);
+            }
+            Serial.println();
+        }
       }
     }
 };
 
 void setWakeAdvertising(uint8_t* wakePayload) {
+
   Serial.print("Setting wake advertising with payload: ");
   for (int i = 0; i < 6; i++) {
     Serial.printf("%02X ", wakePayload[i]);
@@ -268,6 +379,7 @@ void setWakeAdvertising(uint8_t* wakePayload) {
 }
 
 void setNormalAdvertising() {
+
   Serial.println("Setting normal advertising");
   
   // Stop current advertising
@@ -299,6 +411,7 @@ void setNormalAdvertising() {
 }
 
 void sendCommand(uint8_t* command, size_t length, const char* commandName) {
+
   if (!deviceConnected || !pServer || pServer->getConnectedCount() == 0) {
     M5.Lcd.fillScreen(BLACK);
     M5.Lcd.setCursor(40, 35);
@@ -325,7 +438,8 @@ void sendCommand(uint8_t* command, size_t length, const char* commandName) {
   M5.Lcd.setCursor(55, 35);
   M5.Lcd.setTextColor(BLACK);
   M5.Lcd.print("SENT!");
-  delay(500);
+  delay(400);
+
   updateDisplay();
 }
 

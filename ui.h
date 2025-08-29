@@ -139,6 +139,7 @@ int getTextWidth(String text, int textSize) {
 }
 
 void updateDisplay() {
+  
   M5.Lcd.fillScreen(BLACK);
   M5.Lcd.setTextSize(scaledTextSize);
   
@@ -215,6 +216,8 @@ void updateDisplay() {
   M5.Lcd.setTextSize(1); // Always size 1 for instructions
   M5.Lcd.setCursor(layout.instructX, layout.instructY);
   M5.Lcd.print("A:Run B:Next");
+
+  displayCameraMode();
 }
 
 void showNotConnectedMessage() {
