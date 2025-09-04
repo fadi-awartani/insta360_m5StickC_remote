@@ -147,7 +147,7 @@ void updateDisplay() {
   drawConnectionStatus();
   
   // Draw screen indicator dots at bottom
-  for (int i = 0; i < numScreens; i++) {
+  for (int i = 0; i < NUM_SCREENS; i++) {
     int x = layout.dotsStartX + (i * layout.dotsSpacing);
     int y = layout.dotsY;
     int dotRadius = isPlus2 ? 4 : 3;

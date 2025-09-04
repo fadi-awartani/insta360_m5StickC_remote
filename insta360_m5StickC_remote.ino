@@ -156,7 +156,10 @@ void setup() {
                       GPS_REMOTE_NOTIFY_CHAR_UUID,
                       BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY
                     );
-  pNotifyCharacteristic->addDescriptor(new BLE2902());
+  pDescriptor2902 = new BLE2902();
+  pDescriptor2902->setNotifications(true);
+  pDescriptor2902->setIndications(true);
+  pNotifyCharacteristic->addDescriptor(pDescriptor2902);
 
   // Start the service
   pService->start();
@@ -192,7 +195,7 @@ void loop() {
 
   // Button B - Navigate to next screen
   if (M5.BtnB.wasReleased()) {
-    currentScreen = (currentScreen + 1) % numScreens;
+    currentScreen = (currentScreen + 1) % NUM_SCREENS;
     Serial.print("Switched to screen: ");
     Serial.println(currentScreen);
     updateDisplay();
@@ -204,11 +207,11 @@ void loop() {
     Serial.println(currentScreen);
     
     switch (currentScreen) {
-      case 0: // Connect New Camera
+      case SCREEN_CONNECT_CAMERA: // Connect New Camera
         connectNewCamera();
         break;
         
-      case 1: // Shutter
+      case SCREEN_SHUTTER: // Shutter
         if (!deviceConnected) {
           showNotConnectedMessage();
         } else {
@@ -216,7 +219,7 @@ void loop() {
         }
         break;
         
-      case 2: // Switch Mode
+      case SCREEN_SWITCH_MODE: // Switch Mode
         if (!deviceConnected) {
           showNotConnectedMessage();
         } else {
@@ -224,7 +227,7 @@ void loop() {
         }
         break;
         
-      case 3: // Screen Off
+      case SCREEN_CAMERA_SCREEN_OFF: // Screen Off
         if (!deviceConnected) {
           showNotConnectedMessage();
         } else {
@@ -232,7 +235,7 @@ void loop() {
         }
         break;
         
-      case 4: // Sleep
+      case SCREEN_CAMERA_SLEEP: // Sleep
         if (!deviceConnected) {
           showNotConnectedMessage();
         } else {
@@ -240,12 +243,16 @@ void loop() {
         }
         break;
         
-      case 5: // Wake
+      case SCREEN_CAMERA_WAKE: // Wake
         if (!currentCamera.isValid) {
           showNoCameraMessage();
         } else {
           executeWake();
         }
+        break;
+
+      default:
+        Serial.println("Error: Wrong screen mode");
         break;
     }
     

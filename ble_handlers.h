@@ -15,6 +15,7 @@ BLEService* pService = nullptr;
 BLECharacteristic* pWriteCharacteristic = nullptr;
 BLECharacteristic* pNotifyCharacteristic = nullptr;
 BLEScan* pBLEScan = nullptr;
+BLE2902 *pDescriptor2902;
 bool deviceConnected = false;
 bool oldDeviceConnected = false;
 

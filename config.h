@@ -26,8 +26,14 @@
 #define ICON_CYAN 0x07FF
 #define ICON_WHITE 0xFFFF
 
-// UI constants
-const int numScreens = 6;
+// Remote screens
+#define SCREEN_CONNECT_CAMERA     0
+#define SCREEN_SHUTTER            1
+#define SCREEN_SWITCH_MODE        2
+#define SCREEN_CAMERA_SCREEN_OFF  3
+#define SCREEN_CAMERA_SLEEP       4
+#define SCREEN_CAMERA_WAKE        5
+#define NUM_SCREENS               6
 
 // GPIO debounce settings
 const unsigned long debounceDelay = 200; // 200ms debounce
