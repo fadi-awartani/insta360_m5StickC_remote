@@ -25,6 +25,7 @@ const uint8_t MODE_STATUS_PREFIX[] = {
 };
 
 // Recognize various modes by Camera responses
+// TODO: Figure out the mode bytes for cameras other than the X5
 const uint8_t MODE_CAMERA[] = {
   0x20, 0x39, 0x39, 0x39, 0x2B
 };
@@ -48,7 +49,7 @@ const uint8_t HEARTBEAT[] = {
 void displayCameraMode(void) {
 
     // If a mode was detected, show it
-    if (mode_str.length() > 0) {
+    if (mode_str.length() > 0 && !mode_str.startsWith("Unknown")) {
 
         String mode_line = "Mode: " + mode_str;
 

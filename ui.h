@@ -292,13 +292,13 @@ void checkGPIOPins() {
   }
   lastSleepState = currentSleepState;
   
-  // Check G36 (WAKE_PIN) - Function #6 - Trigger on HIGH (to 3.3V)
+  // Check G25 (WAKE_PIN) - Function #6 - Trigger on HIGH (to 3.3V)
   static bool lastWakeState = LOW;
   bool currentWakeState = digitalRead(WAKE_PIN);
   
   if (currentWakeState == HIGH && lastWakeState == LOW && (currentTime - lastPinPress[2] > debounceDelay)) {
     lastPinPress[2] = currentTime;
-    Serial.print("GPIO Pin G36 activated - Delaying ");
+    Serial.print("GPIO Pin G25 activated - Delaying ");
     Serial.print(gpioDelay);
     Serial.println("ms then executing Wake");
     delay(gpioDelay);  // Apply unique delay before executing

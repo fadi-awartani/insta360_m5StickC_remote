@@ -116,12 +116,12 @@ void setup() {
   // Setup GPIO pins - G0 uses hardware pullup, others use pulldown
   pinMode(SHUTTER_PIN, INPUT);           // G0 has hardware pullup - trigger on LOW (to GND)
   pinMode(SLEEP_PIN, INPUT_PULLDOWN);    // G26 for Sleep (#5) - trigger on HIGH (to 3.3V)
-  pinMode(WAKE_PIN, INPUT_PULLDOWN);     // G36 for Wake (#6) - trigger on HIGH (to 3.3V)
+  pinMode(WAKE_PIN, INPUT_PULLDOWN);     // G25 for Wake (#6) - trigger on HIGH (to 3.3V)
   
   Serial.println("GPIO pins configured:");
   Serial.println("G0 (Shutter) - INPUT (hardware pullup, trigger on GND)");
   Serial.println("G26 (Sleep) - INPUT_PULLDOWN (trigger on 3.3V)");
-  Serial.println("G36 (Wake) - INPUT_PULLDOWN (trigger on 3.3V)");
+  Serial.println("G25 (Wake) - INPUT_PULLDOWN (trigger on 3.3V)");
   Serial.println("GPIO input disabled for 2 seconds after startup...");
   
   // Load saved camera

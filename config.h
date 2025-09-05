@@ -9,7 +9,7 @@
 // GPIO pin definitions for external button control
 #define SHUTTER_PIN G0   // Pin for Shutter function (#2) - triggers on LOW (to GND)
 #define SLEEP_PIN G26    // Pin for Sleep function (#5) - triggers on HIGH (to 3.3V)
-#define WAKE_PIN G36     // Pin for Wake function (#6) - triggers on HIGH (to 3.3V)
+#define WAKE_PIN 25     // Pin for Wake function (#6) - triggers on HIGH (to 3.3V)
 
 // GPS Remote service UUIDs
 #define GPS_REMOTE_SERVICE_UUID      "0000ce80-0000-1000-8000-00805f9b34fb"

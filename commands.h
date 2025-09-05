@@ -115,7 +115,7 @@ void executeShutter() {
 
 void executeSwitchMode() {
   sendCommand(MODE_CMD, sizeof(MODE_CMD), "MODE");
-  mode_str = "Detecting...";
+  mode_str = "Unknown";
   updateDisplay();
 }
 
