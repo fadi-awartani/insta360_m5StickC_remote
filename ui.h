@@ -31,6 +31,7 @@ struct ScreenLayout {
   int statusX, statusY;
   int dotsY, dotsSpacing, dotsStartX;
   int instructX, instructY;
+  int battX, battY;
   int connectionX, connectionY, connectionRadius;
 };
 
@@ -77,6 +78,8 @@ void detectDeviceAndSetScale() {
     layout.dotsStartX = 45;
     layout.instructX = 8;
     layout.instructY = 8;
+    layout.battX = 8;
+    layout.battY = 18;
   } else {
     // Original M5StickC layout (160x80)
     layout.iconX = (160 - baseIconSize) / 2;  // Center 32px icon in 160px width
@@ -91,6 +94,8 @@ void detectDeviceAndSetScale() {
     layout.dotsStartX = 30;
     layout.instructX = 5;
     layout.instructY = 5;
+    layout.battX = 5;
+    layout.battY = 12;
   }
   
   Serial.print("Scale factor: ");
@@ -216,6 +221,14 @@ void updateDisplay() {
   M5.Lcd.setTextSize(1); // Always size 1 for instructions
   M5.Lcd.setCursor(layout.instructX, layout.instructY);
   M5.Lcd.print("A:Run B:Next");
+
+  // Show battery level
+  M5.Lcd.setTextColor(DARKGREY);
+  M5.Lcd.setTextSize(1);
+  M5.Lcd.setCursor(layout.battX, layout.battY);
+  char battString[32];
+  sprintf(battString, "Battery: %ld\n", M5.Power.getBatteryLevel());
+  M5.Lcd.print(battString);
 
   displayCameraMode();
 }
